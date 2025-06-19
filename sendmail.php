@@ -1,20 +1,28 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST['nom'];
-    $email = $_POST['email'];
-    $age = $_POST['age'];
-    $message = $_POST['message'];
-    $sujet = $_POST['sujet'];
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-    $to = "ragheb.oueslati@inetum.com"; // Remplacez par votre adresse
-    $subject = "Nouveau message du formulaire : $sujet";
-    $body = "Nom: $nom\nEmail: $email\nÂge: $age\nMessage:\n$message";
-    $headers = "From: $email";
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-    if (mail($to, $subject, $body, $headers)) {
-        echo "Message envoyé avec succès.";
-    } else {
-        echo "Erreur lors de l'envoi du message.";
-    }
+$mail = new PHPMailer(true);
+
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com'; // ou smtp.office365.com
+    $mail->SMTPAuth = true;
+    $mail->Username = 'ragheboueslati@gmail.com';
+    $mail->Password = 'Driss1900$_'; // utilisez un mot de passe d'application
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
+
+    $mail->setFrom($_POST['email'], $_POST['nom']);
+    $mail->addAddress('raghebouesalti@gmail.com');
+
+    $mail->Subject = 'Nouveau message : ' . $_POST['sujet'];
+    $mail->Body = "Nom: {$_POST['nom']}\nEmail: {$_POST['email']}\nÂge: {$_POST['age']}\nMessage:\n{$_POST['message']}";
+
+    echo 'Message envoyé avec succès.';
+} catch (Exception $e) {
+    echo "Erreur : {$mail->ErrorInfo}";
 }
-?>
